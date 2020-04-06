@@ -11,7 +11,7 @@ class Search extends EndpointPaging {
 
   SearchPages get(String searchQuery,
       [Iterable<SearchType> types = SearchType.all]) {
-    var type = types.map((type) => type.key).join(",");
+    var type = types.map((type) => type.key).join(',');
     return SearchPages(_api, '$_path?q=$searchQuery&type=${type}', {
       'playlists': (json) => PlaylistSimple.fromJson(json),
       'albums': (json) => AlbumSimple.fromJson(json),
@@ -29,7 +29,7 @@ class SearchType {
   static const _track = 'track';
 
   const SearchType(this._key);
-  get key => _key;
+  String get key => _key;
 
   static const album = SearchType(_album);
   static const artist = SearchType(_artist);
@@ -51,19 +51,20 @@ class SearchResult {
 
   SearchResult([this.artists, this.tracks, this.playlists, this.albums]);
 
-  get length => artists?.items?.length ??
+  int get length => artists?.items?.length ??
       tracks?.items?.length ??
       playlists?.items?.length ??
       albums?.items?.length;
 }
 
 class SearchPages extends _Pages<SearchResult> {
-  Map<String, ParserFunction<Object>> _pageMappers;
+  final Map<String, ParserFunction<Object>> _pageMappers;
 
   SearchPages(SpotifyApiBase api, String path, this._pageMappers,
       [String pageKey, ParserFunction<Object> pageContainerParser])
       : super(api, path, pageKey, pageContainerParser);
 
+  @override
   Future<SearchResult> getPage(int limit, int offset) async {
     var pathDelimiter = _path.contains('?') ? '&' : '?';
     var path = '$_path${pathDelimiter}limit=$limit&offset=$offset';
@@ -72,7 +73,7 @@ class SearchPages extends _Pages<SearchResult> {
 
   SearchResult _parseBundledPage(String jsonString) {
     var map = json.decode(jsonString);
-    SearchResult searchResult = SearchResult();
+    final searchResult = SearchResult();
     _pageMappers.forEach((key, value) {
       if (map[key] != null) {
         Page createPage<T>(){
