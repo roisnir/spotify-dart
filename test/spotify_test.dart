@@ -58,7 +58,8 @@ Future main() async {
   group('Search', () {
     test('get', () async {
       var searchResult = await spotify.search.get('metallica').first();
-      expect(searchResult.length, 2);
+      expect(searchResult.tracks.items.length, 3);
+      expect(searchResult.playlists.items.length, 4);
     });
 
     test('get_error', () async {
